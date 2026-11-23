@@ -41,7 +41,7 @@
       background: var(--bg);
       color: var(--text);
       line-height: 1.4;
-      padding-bottom: 90px;
+      padding-bottom: 24px;
       min-height: 100vh;
     }
 
@@ -126,7 +126,7 @@
     .section-header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 8px;
       padding: 14px 16px 6px;
       cursor: pointer;
       user-select: none;
@@ -138,6 +138,7 @@
       color: var(--muted);
       text-transform: uppercase;
       letter-spacing: 0.04em;
+      flex: 1;
     }
 
     .section-header .chevron {
@@ -187,11 +188,12 @@
     }
 
     .cover {
-      width: 96px;
-      min-width: 96px;
-      height: 96px;
+      width: 110px;
+      min-width: 110px;
+      height: 110px;
       object-fit: cover;
       background: #222;
+      align-self: stretch;
     }
 
     .info {
@@ -248,6 +250,14 @@
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .desc.expanded {
+      display: block;
+      -webkit-line-clamp: unset;
+      overflow: visible;
     }
 
     .check-row {
@@ -292,37 +302,19 @@
       font-weight: 600;
     }
 
-    footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--bg2);
-      border-top: 1px solid var(--border);
-      padding: 12px 16px;
-      display: flex;
-      gap: 10px;
-      z-index: 30;
-    }
-
-    button {
-      flex: 1;
-      border: none;
-      border-radius: 12px;
-      padding: 12px;
-      font-size: 0.88rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .btn-reset {
-      background: var(--card);
+    .reset-link {
+      font-size: 0.7rem;
       color: var(--muted);
-      border: 1px solid var(--border);
+      text-decoration: underline;
+      cursor: pointer;
+      margin-left: 10px;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
     }
 
-    .btn-reset:active {
-      background: var(--card-hover);
+    .reset-link:active {
+      color: var(--text);
     }
 
     .empty {
@@ -364,14 +356,11 @@
   <div id="doneSection">
     <div class="section-header" id="doneHeader" onclick="toggleSection('done')">
       <h2 id="doneLabel">Gehört</h2>
+      <span class="reset-link" onclick="event.stopPropagation(); resetAll()">Alles zurücksetzen</span>
       <span class="chevron">▼</span>
     </div>
     <div class="list" id="doneList"></div>
   </div>
-
-  <footer>
-    <button class="btn-reset" onclick="resetAll()">Alles zurücksetzen</button>
-  </footer>
 
   <script>
     const episodes = [
@@ -595,7 +584,7 @@
       card.dataset.id = ep.id;
       card.innerHTML = `
         <img class="cover" src="${ep.cover}" alt="Cover ${ep.id}" loading="lazy"
-             onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='https://www.bibiblocksberg.de/sites/default/files/styles/max_2600x2600/public/episode/${ep.id}.JPG.webp';}else if(!this.dataset.tried2){this.dataset.tried2=1;this.src='https://www.bibiblocksberg.de/sites/default/files/styles/max_2600x2600/public/hoerspiele/ep_image/Bibi_Blocksberg_${String(ep.id).padStart(3,'0')}.jpg.webp';}else{this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2296%22 height=%2296%22%3E%3Crect fill=%22%23222%22 width=%2296%22 height=%2296%22/%3E%3Ctext x=%2248%22 y=%2254%22 text-anchor=%22middle%22 fill=%22%23aaa%22 font-size=%2220%22%3E${ep.id}%3C/text%3E%3C/svg%3E';}">
+             onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='https://www.bibiblocksberg.de/sites/default/files/styles/max_2600x2600/public/episode/${ep.id}.JPG.webp';}else if(!this.dataset.tried2){this.dataset.tried2=1;this.src='https://www.bibiblocksberg.de/sites/default/files/styles/max_2600x2600/public/hoerspiele/ep_image/Bibi_Blocksberg_${String(ep.id).padStart(3,'0')}.jpg.webp';}else{this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22110%22 height=%22110%22%3E%3Crect fill=%22%23222%22 width=%22110%22 height=%22110%22/%3E%3Ctext x=%2255%22 y=%2262%22 text-anchor=%22middle%22 fill=%22%23aaa%22 font-size=%2222%22%3E${ep.id}%3C/text%3E%3C/svg%3E';}">
         <div class="info">
           <div>
             <div class="title-row">
@@ -603,7 +592,7 @@
               <div class="title">${ep.title}</div>
             </div>
             <div class="meta"><span class="year">${ep.year}</span></div>
-            <div class="desc">${ep.desc}</div>
+            <div class="desc" onclick="this.classList.toggle('expanded')">${ep.desc}</div>
           </div>
           <div class="check-row">
             <span class="status ${checked ? "done" : ""}">${checked ? "Gehört ✓" : "Noch nicht"}</span>
