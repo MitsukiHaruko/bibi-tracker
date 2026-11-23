@@ -1,4 +1,4 @@
-const CACHE = "bibi-tracker-v1";
+const CACHE = "bibi-tracker-v3";
 const ASSETS = [
   "./",
   "./index.html",
@@ -9,7 +9,9 @@ const ASSETS = [
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(ASSETS)).then(() => self.skipWaiting())
+    caches.open(CACHE)
+      .then((cache) => cache.addAll(ASSETS))
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -22,13 +24,34 @@ self.addEventListener("activate", (e) => {
 });
 
 self.addEventListener("fetch", (e) => {
-  // Network-first for external covers, cache-first for app shell
-  if (e.request.url.includes("bibiblocksberg.de")) {
+  const url = e.request.url;
+
+  // Always try network first for the app shell so updates appear on normal refresh
+  if (
+    url.endsWith("/") ||
+    url.endsWith("/index.html") ||
+    url.includes("sw.js") ||
+    url.includes("manifest.json")
+  ) {
     e.respondWith(
-      fetch(e.request).catch(() => caches.match(e.request))
+      fetch(e.request)
+        .then((res) => {
+          const clone = res.clone();
+          caches.open(CACHE).then((cache) => cache.put(e.request, clone));
+          return res;
+        })
+        .catch(() => caches.match(e.request))
     );
     return;
   }
+
+  // External covers: network first
+  if (url.includes("bibiblocksberg.de")) {
+    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+    return;
+  }
+
+  // Everything else: cache first
   e.respondWith(
     caches.match(e.request).then((cached) => cached || fetch(e.request))
   );
