@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="theme-color" content="#160a28" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Bibi Tracker" />
@@ -15,18 +15,22 @@
   <title>Bibi Blocksberg Tracker</title>
   <style>
     :root {
-      --bg: #0a0a0a;
-      --bg2: #111111;
-      --card: #161616;
-      --card-hover: #1e1e1e;
-      --text: #e5e5e5;
-      --muted: #8a8a8a;
-      --primary: #c0c0c0;
-      --primary-dim: #8a8a8a;
-      --success: #6ee7b7;
-      --border: #2a2a2a;
-      --greyed: #555555;
-      --accent: #d4d4d4;
+      /* Magical night-sky Bibi theme */
+      --bg: #160a28;
+      --bg2: #22103a;
+      --card: #2e1a4a;
+      --card-hover: #3c2460;
+      --text: #f8f0ff;
+      --muted: #c4a8d8;
+      --primary: #ff7eb9;
+      --primary-dim: #e05a9a;
+      --success: #7ddea8;
+      --border: #4a2d6a;
+      --greyed: #8a7598;
+      --accent: #ffd56a;
+      --star-gold: #ffd56a;
+      --pink-glow: rgba(255, 126, 185, 0.35);
+      --gold-glow: rgba(255, 213, 106, 0.4);
     }
 
     * {
@@ -39,6 +43,10 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: var(--bg);
+      background-image:
+        radial-gradient(ellipse 120% 80% at 50% -20%, rgba(120, 40, 160, 0.45) 0%, transparent 55%),
+        radial-gradient(ellipse 80% 50% at 90% 20%, rgba(255, 100, 180, 0.12) 0%, transparent 45%),
+        radial-gradient(ellipse 60% 40% at 10% 80%, rgba(80, 40, 140, 0.25) 0%, transparent 50%);
       color: var(--text);
       line-height: 1.4;
       padding-bottom: 80px;
@@ -46,12 +54,14 @@
     }
 
     header {
-      background: var(--bg2);
+      background: linear-gradient(180deg, var(--bg2) 0%, rgba(34, 16, 58, 0.95) 100%);
       border-bottom: 1px solid var(--border);
       padding: 10px 16px;
       position: sticky;
       top: 0;
       z-index: 30;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
     }
 
     .header-top {
@@ -62,16 +72,18 @@
     }
 
     header h1 {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 700;
-      color: var(--accent);
+      color: var(--primary);
       letter-spacing: -0.02em;
       cursor: pointer;
       user-select: none;
-      transition: color 0.15s;
+      transition: color 0.15s, text-shadow 0.15s;
+      text-shadow: 0 0 18px var(--pink-glow);
     }
     header h1:active {
-      color: #FFD700;
+      color: var(--accent);
+      text-shadow: 0 0 20px var(--gold-glow);
     }
 
     .progress-wrap {
@@ -84,17 +96,19 @@
 
     .progress-bar {
       flex: 1;
-      height: 5px;
-      background: var(--border);
+      height: 6px;
+      background: rgba(74, 45, 106, 0.7);
       border-radius: 99px;
       overflow: hidden;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #555, #c0c0c0);
+      background: linear-gradient(90deg, #ff7eb9, #ffd56a);
       border-radius: 99px;
       transition: width 0.35s ease;
+      box-shadow: 0 0 10px var(--pink-glow);
     }
 
     .progress-text {
@@ -109,19 +123,22 @@
       position: fixed;
       bottom: 20px;
       right: 16px;
-      width: 48px;
-      height: 48px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      background: #2a2a2a;
-      border: 1px solid var(--border);
-      color: var(--text);
+      background: linear-gradient(145deg, #ff7eb9, #d45a9a);
+      border: none;
+      color: #fff;
       font-size: 20px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
       z-index: 40;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 18px rgba(255, 100, 160, 0.45), 0 2px 6px rgba(0,0,0,0.3);
+    }
+    .fab-search:active {
+      transform: scale(0.94);
     }
 
     .search-panel {
@@ -136,6 +153,7 @@
       z-index: 45;
       gap: 10px;
       align-items: center;
+      box-shadow: 0 -8px 30px rgba(0,0,0,0.4);
     }
 
     .search-panel.open {
@@ -146,7 +164,7 @@
       flex: 1;
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 12px 14px;
       color: var(--text);
       font-size: 0.95rem;
@@ -154,7 +172,10 @@
     }
 
     #search::placeholder { color: var(--muted); }
-    #search:focus { border-color: #555; }
+    #search:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--pink-glow);
+    }
 
     .search-close {
       background: none;
@@ -179,7 +200,7 @@
       font-weight: 600;
       color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
       flex: 1;
     }
 
@@ -211,8 +232,9 @@
       display: flex;
       gap: 0;
       border: 1px solid var(--border);
-      transition: background 0.15s, opacity 0.2s;
+      transition: background 0.15s, opacity 0.2s, box-shadow 0.2s;
       align-items: stretch;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.25);
     }
 
     .card:active {
@@ -220,7 +242,7 @@
     }
 
     .card.listened {
-      opacity: 0.5;
+      opacity: 0.55;
     }
 
     .card.listened .title,
@@ -233,7 +255,7 @@
     .cover-wrap {
       width: 128px;
       min-width: 128px;
-      background: #222;
+      background: #1a0a28;
       flex-shrink: 0;
       display: flex;
       align-self: stretch;
@@ -255,17 +277,19 @@
       left: 6px;
       font-size: 18px;
       line-height: 1;
-      color: #FFD700;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+      color: var(--star-gold);
+      text-shadow: 0 1px 4px rgba(0,0,0,0.7);
       pointer-events: none;
       z-index: 2;
-      filter: drop-shadow(0 0 1px rgba(0,0,0,0.5));
+      filter: drop-shadow(0 0 3px var(--gold-glow));
     }
 
     /* Golden animated sheen for favorites – entire entry slot */
     .card.favorite {
       position: relative;
       overflow: hidden;
+      border-color: rgba(255, 213, 106, 0.45);
+      box-shadow: 0 0 16px rgba(255, 180, 60, 0.18), 0 2px 10px rgba(0,0,0,0.25);
     }
     .card.favorite::after {
       content: "";
@@ -278,9 +302,9 @@
         105deg,
         transparent 0%,
         transparent 40%,
-        rgba(255, 215, 0, 0.10) 45%,
-        rgba(255, 236, 150, 0.45) 50%,
-        rgba(255, 215, 0, 0.10) 55%,
+        rgba(255, 215, 0, 0.12) 45%,
+        rgba(255, 236, 150, 0.5) 50%,
+        rgba(255, 215, 0, 0.12) 55%,
         transparent 60%,
         transparent 100%
       );
@@ -303,7 +327,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(0,0,0,0.82);
+      background: rgba(22, 10, 40, 0.88);
       padding: 4px 0 5px;
       display: flex;
       justify-content: center;
@@ -314,10 +338,11 @@
     }
 
     .score-bar .star {
-      color: #fff;
+      color: var(--star-gold);
       font-size: 11px;
       line-height: 1;
       letter-spacing: -0.5px;
+      text-shadow: 0 0 4px var(--gold-glow);
     }
 
     .info {
@@ -345,7 +370,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.95);
+      background: rgba(10, 4, 20, 0.96);
       z-index: 100;
       align-items: center;
       justify-content: center;
@@ -368,7 +393,7 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.15);
+      background: rgba(255, 126, 185, 0.25);
       color: #fff;
       border: none;
       font-size: 22px;
@@ -387,7 +412,7 @@
     }
 
     .num {
-      background: #2a2a2a;
+      background: linear-gradient(135deg, #4a2d6a, #3a1f5a);
       color: var(--primary);
       font-size: 0.65rem;
       font-weight: 700;
@@ -395,6 +420,7 @@
       border-radius: 5px;
       flex-shrink: 0;
       margin-top: 1px;
+      border: 1px solid rgba(255, 126, 185, 0.25);
     }
 
     .title {
@@ -406,17 +432,17 @@
       user-select: none;
     }
     .title:active {
-      color: var(--accent);
+      color: var(--primary);
     }
 
     /* Series switcher */
     header h1 {
       cursor: pointer;
       user-select: none;
-      transition: color 0.15s;
+      transition: color 0.15s, text-shadow 0.15s;
     }
     header h1:active {
-      color: #FFD700;
+      color: var(--accent);
     }
     .series-hint {
       font-size: 0.62rem;
@@ -432,10 +458,10 @@
       bottom: 80px;
       left: 50%;
       transform: translateX(-50%) translateY(20px);
-      background: #2a2a2a;
+      background: var(--card);
       color: var(--text);
       padding: 10px 18px;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 0.85rem;
       border: 1px solid var(--border);
       z-index: 200;
@@ -443,7 +469,7 @@
       pointer-events: none;
       transition: opacity 0.2s, transform 0.2s;
       white-space: nowrap;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.45), 0 0 20px var(--pink-glow);
     }
     #toast.show {
       opacity: 1;
@@ -484,7 +510,7 @@
     .checkbox {
       width: 26px;
       height: 26px;
-      border: 2px solid #3a3a3a;
+      border: 2px solid #6a4a8a;
       border-radius: 7px;
       display: flex;
       align-items: center;
@@ -493,16 +519,18 @@
       transition: all 0.2s;
       flex-shrink: 0;
       margin-top: 1px;
+      background: rgba(46, 26, 74, 0.5);
     }
 
     .checkbox.checked {
       background: var(--success);
       border-color: var(--success);
+      box-shadow: 0 0 10px rgba(125, 222, 168, 0.4);
     }
 
     .checkbox.checked::after {
       content: "✓";
-      color: #0a0a0a;
+      color: #0a1a12;
       font-size: 15px;
       font-weight: 700;
     }
@@ -519,7 +547,7 @@
     }
 
     .reset-link:active {
-      color: var(--text);
+      color: var(--primary);
     }
 
     .empty {
@@ -573,18 +601,18 @@
     .hist-bar-track {
       flex: 1;
       height: 8px;
-      background: var(--border);
+      background: rgba(74, 45, 106, 0.6);
       border-radius: 99px;
       overflow: hidden;
     }
 
     .hist-bar-fill {
       height: 100%;
-      background: linear-gradient(90deg, #c9a227, #FFD700 40%, #ffe566);
+      background: linear-gradient(90deg, #ff7eb9, #ffd56a);
       border-radius: 99px;
       transition: width 0.35s ease;
       min-width: 0;
-      box-shadow: 0 0 6px rgba(255, 215, 0, 0.35);
+      box-shadow: 0 0 8px var(--gold-glow);
     }
 
     .hist-count {
@@ -613,15 +641,15 @@
     }
 
     .filter-btn.active {
-      background: #2a2a2a;
-      border-color: #555;
-      color: var(--text);
+      background: rgba(255, 126, 185, 0.18);
+      border-color: var(--primary);
+      color: var(--primary);
     }
 
     .filter-btn.fav-active {
-      background: rgba(255, 215, 0, 0.12);
-      border-color: #b8860b;
-      color: #FFD700;
+      background: rgba(255, 213, 106, 0.15);
+      border-color: #c9a227;
+      color: var(--star-gold);
     }
 
     .hidden {
@@ -633,7 +661,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.75);
+      background: rgba(10, 4, 22, 0.82);
       z-index: 90;
       align-items: center;
       justify-content: center;
@@ -642,20 +670,22 @@
     #rating-modal.open { display: flex; }
 
     .rating-box {
-      background: var(--bg2);
+      background: linear-gradient(165deg, #2e1a4a 0%, #22103a 100%);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 22px 20px 18px;
       width: 100%;
       max-width: 300px;
       text-align: center;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 30px var(--pink-glow);
     }
 
     .rating-box h3 {
-      font-size: 1rem;
+      font-size: 1.05rem;
       font-weight: 600;
       margin-bottom: 4px;
-      color: var(--text);
+      color: var(--primary);
+      text-shadow: 0 0 12px var(--pink-glow);
     }
 
     .rating-box .ep-title {
@@ -676,17 +706,18 @@
       background: none;
       border: none;
       font-size: 28px;
-      color: #3a3a3a;
+      color: #4a3a5a;
       cursor: pointer;
       padding: 4px;
       line-height: 1;
-      transition: color 0.15s, transform 0.1s;
+      transition: color 0.15s, transform 0.1s, text-shadow 0.15s;
     }
     .stars-row .star-btn.active {
-      color: #fff;
+      color: var(--star-gold);
+      text-shadow: 0 0 12px var(--gold-glow);
     }
     .stars-row .star-btn:active {
-      transform: scale(1.15);
+      transform: scale(1.2);
     }
 
     .fav-row {
@@ -700,7 +731,7 @@
     .fav-btn {
       background: none;
       border: 1px solid var(--border);
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 8px 16px;
       color: var(--muted);
       font-size: 0.9rem;
@@ -711,9 +742,10 @@
       transition: all 0.15s;
     }
     .fav-btn.active {
-      border-color: #FFD700;
-      color: #FFD700;
-      background: rgba(255, 215, 0, 0.08);
+      border-color: var(--star-gold);
+      color: var(--star-gold);
+      background: rgba(255, 213, 106, 0.12);
+      box-shadow: 0 0 14px var(--gold-glow);
     }
     .fav-btn .heart-icon {
       font-size: 1.1rem;
@@ -726,7 +758,7 @@
     .rating-actions button {
       flex: 1;
       padding: 11px 0;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
@@ -738,8 +770,19 @@
       border: 1px solid var(--border);
     }
     .rating-actions .btn-save {
-      background: var(--success);
-      color: #0a0a0a;
+      background: linear-gradient(135deg, #7ddea8, #5bc98a);
+      color: #0a1a12;
+      box-shadow: 0 2px 12px rgba(125, 222, 168, 0.35);
+    }
+
+    /* Unlisten button inherits some styling via inline, but we can enhance */
+    #rating-unlisten {
+      border-color: var(--border) !important;
+      color: var(--muted) !important;
+      background: transparent !important;
+    }
+    #rating-unlisten:active {
+      color: var(--primary) !important;
     }
   </style>
 </head>
