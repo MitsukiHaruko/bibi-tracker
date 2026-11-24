@@ -1,7 +1,7 @@
 {
-  "name": "Bibi Blocksberg Tracker",
+  "name": "Bibi Tracker",
   "short_name": "Bibi Tracker",
-  "description": "Tracker für alle Bibi Blocksberg Hörspiele – Fortschritt speichern, suchen und markieren.",
+  "description": "Tracker für Bibi Blocksberg & Bibi und Tina Hörspiele – Fortschritt speichern, bewerten und Favoriten markieren.",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0a0a0a",
