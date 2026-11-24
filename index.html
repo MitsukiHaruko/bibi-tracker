@@ -231,6 +231,7 @@
       flex-shrink: 0;
       display: flex;
       align-self: stretch;
+      position: relative;
     }
 
     .cover {
@@ -240,6 +241,41 @@
       object-position: center top;
       display: block;
       cursor: zoom-in;
+    }
+
+    .heart-overlay {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      font-size: 18px;
+      line-height: 1;
+      color: #FFD700;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+      pointer-events: none;
+      z-index: 2;
+      filter: drop-shadow(0 0 1px rgba(0,0,0,0.5));
+    }
+
+    .score-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.82);
+      padding: 4px 0 5px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .score-bar .star {
+      color: #fff;
+      font-size: 11px;
+      line-height: 1;
+      letter-spacing: -0.5px;
     }
 
     .info {
@@ -408,6 +444,120 @@
     .hidden {
       display: none !important;
     }
+
+    /* Rating modal */
+    #rating-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 90;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    #rating-modal.open { display: flex; }
+
+    .rating-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 20px 18px;
+      width: 100%;
+      max-width: 300px;
+      text-align: center;
+    }
+
+    .rating-box h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .rating-box .ep-title {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 18px;
+      line-height: 1.3;
+    }
+
+    .stars-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .stars-row .star-btn {
+      background: none;
+      border: none;
+      font-size: 28px;
+      color: #3a3a3a;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+      transition: color 0.15s, transform 0.1s;
+    }
+    .stars-row .star-btn.active {
+      color: #fff;
+    }
+    .stars-row .star-btn:active {
+      transform: scale(1.15);
+    }
+
+    .fav-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .fav-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 16px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .fav-btn.active {
+      border-color: #FFD700;
+      color: #FFD700;
+      background: rgba(255, 215, 0, 0.08);
+    }
+    .fav-btn .heart-icon {
+      font-size: 1.1rem;
+    }
+
+    .rating-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .rating-actions button {
+      flex: 1;
+      padding: 11px 0;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+    }
+    .rating-actions .btn-cancel {
+      background: var(--card);
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .rating-actions .btn-save {
+      background: var(--success);
+      color: #0a0a0a;
+    }
   </style>
 </head>
 <body>
@@ -449,6 +599,31 @@
   <div id="lightbox">
     <button id="lightbox-close" aria-label="Schließen">×</button>
     <img id="lightbox-img" alt="Cover" />
+  </div>
+
+  <div id="rating-modal">
+    <div class="rating-box">
+      <h3>Bewertung</h3>
+      <div class="ep-title" id="rating-ep-title"></div>
+      <div class="stars-row" id="stars-row">
+        <button type="button" class="star-btn" data-star="1">★</button>
+        <button type="button" class="star-btn" data-star="2">★</button>
+        <button type="button" class="star-btn" data-star="3">★</button>
+        <button type="button" class="star-btn" data-star="4">★</button>
+        <button type="button" class="star-btn" data-star="5">★</button>
+      </div>
+      <div class="fav-row">
+        <button type="button" class="fav-btn" id="fav-btn">
+          <span class="heart-icon">♥</span>
+          <span>Favorit</span>
+        </button>
+      </div>
+      <div class="rating-actions" id="rating-actions">
+        <button type="button" class="btn-cancel" id="rating-cancel">Abbrechen</button>
+        <button type="button" class="btn-save" id="rating-save">Speichern</button>
+      </div>
+      <button type="button" class="btn-unlisten" id="rating-unlisten" style="display:none;margin-top:10px;width:100%;padding:10px 0;border-radius:10px;font-size:0.85rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);">Nicht gehört</button>
+    </div>
   </div>
 
   <script>
@@ -629,9 +804,29 @@
     let openCollapsed = false;
     let doneCollapsed = false;
 
+    // Rating modal state
+    let pendingId = null;
+    let pendingScore = 0;
+    let pendingFav = false;
+    let isEditMode = false;
+
     function loadState() {
       try {
-        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        const raw = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+        // Migrate old boolean format → object
+        const migrated = {};
+        for (const [k, v] of Object.entries(raw)) {
+          if (typeof v === "boolean" || v === 1 || v === true) {
+            migrated[k] = { listened: !!v, score: 0, favorite: false };
+          } else if (v && typeof v === "object") {
+            migrated[k] = {
+              listened: !!v.listened,
+              score: Math.min(5, Math.max(0, Number(v.score) || 0)),
+              favorite: !!v.favorite
+            };
+          }
+        }
+        return migrated;
       } catch {
         return {};
       }
@@ -641,15 +836,79 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
 
+    function getEntry(state, id) {
+      return state[id] || { listened: false, score: 0, favorite: false };
+    }
+
     function toggle(id) {
       const state = loadState();
-      state[id] = !state[id];
+      const entry = getEntry(state, id);
+      if (entry.listened) {
+        // Already listened → open rating modal to edit (or unmark via modal)
+        openRatingModal(id, entry.score, entry.favorite, true);
+      } else {
+        // Mark as complete → open rating popup
+        openRatingModal(id, entry.score, entry.favorite, false);
+      }
+    }
+
+    function openRatingModal(id, score = 0, favorite = false, edit = false) {
+      pendingId = id;
+      pendingScore = score || 0;
+      pendingFav = !!favorite;
+      isEditMode = edit;
+      const ep = episodes.find(e => e.id === id);
+      document.getElementById("rating-ep-title").textContent =
+        ep ? `#${ep.id} – ${ep.title}` : `#${id}`;
+      updateStarsUI();
+      updateFavUI();
+      document.getElementById("rating-unlisten").style.display = edit ? "block" : "none";
+      document.getElementById("rating-modal").classList.add("open");
+    }
+
+    function unlistenFromModal() {
+      if (pendingId == null) return;
+      const state = loadState();
+      const entry = getEntry(state, pendingId);
+      entry.listened = false;
+      // keep score & favorite so they reappear if marked again
+      state[pendingId] = entry;
       saveState(state);
+      closeRatingModal();
+      render();
+    }
+
+    function closeRatingModal() {
+      document.getElementById("rating-modal").classList.remove("open");
+      pendingId = null;
+    }
+
+    function updateStarsUI() {
+      document.querySelectorAll("#stars-row .star-btn").forEach(btn => {
+        const s = Number(btn.dataset.star);
+        btn.classList.toggle("active", s <= pendingScore);
+      });
+    }
+
+    function updateFavUI() {
+      document.getElementById("fav-btn").classList.toggle("active", pendingFav);
+    }
+
+    function saveRating() {
+      if (pendingId == null) return;
+      const state = loadState();
+      const entry = getEntry(state, pendingId);
+      entry.listened = true;
+      entry.score = pendingScore;
+      entry.favorite = pendingFav;
+      state[pendingId] = entry;
+      saveState(state);
+      closeRatingModal();
       render();
     }
 
     function resetAll() {
-      if (confirm("Wirklich alle Haken zurücksetzen?")) {
+      if (confirm("Wirklich alle Haken, Bewertungen und Favoriten zurücksetzen?")) {
         localStorage.removeItem(STORAGE_KEY);
         render();
       }
@@ -667,15 +926,29 @@
       }
     }
 
-    function createCard(ep, checked) {
+    function createCard(ep, entry) {
+      const checked = !!entry.listened;
+      const score = entry.score || 0;
+      const favorite = !!entry.favorite;
       const card = document.createElement("div");
       card.className = "card" + (checked ? " listened" : "");
       card.dataset.id = ep.id;
+
+      let overlays = "";
+      if (favorite) {
+        overlays += `<div class="heart-overlay" title="Favorit">♥</div>`;
+      }
+      if (score > 0) {
+        const stars = Array.from({ length: score }, () => `<span class="star">★</span>`).join("");
+        overlays += `<div class="score-bar">${stars}</div>`;
+      }
+
       card.innerHTML = `
         <div class="cover-wrap">
           <img class="cover" src="${ep.cover}" alt="Cover ${ep.id}" loading="lazy"
                onclick="openLightbox(this.src)"
                onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='https://www.bibiblocksberg.de/sites/default/files/styles/max_2600x2600/public/episode/${ep.id}.JPG.webp';}else if(!this.dataset.tried2){this.dataset.tried2=1;this.src='https://www.bibiblocksberg.de/sites/default/files/styles/max_2600x2600/public/hoerspiele/ep_image/Bibi_Blocksberg_${String(ep.id).padStart(3,'0')}.jpg.webp';}else{this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22128%22 height=%22128%22%3E%3Crect fill=%22%23222%22 width=%22128%22 height=%22128%22/%3E%3Ctext x=%2264%22 y=%2272%22 text-anchor=%22middle%22 fill=%22%23aaa%22 font-size=%2224%22%3E${ep.id}%3C/text%3E%3C/svg%3E';}">
+          ${overlays}
         </div>
         <div class="info">
           <div class="info-top">
@@ -691,6 +964,31 @@
           <div class="desc" onclick="this.classList.toggle('expanded')">${ep.desc}</div>
         </div>
       `;
+
+      // Allow editing rating by tapping overlays (or empty cover area) when already listened
+      if (checked) {
+        const wrap = card.querySelector(".cover-wrap");
+        const openEdit = (e) => {
+          e.stopPropagation();
+          openRatingModal(ep.id, score, favorite, true);
+        };
+        const heart = card.querySelector(".heart-overlay");
+        const bar = card.querySelector(".score-bar");
+        if (heart) {
+          heart.style.pointerEvents = "auto";
+          heart.style.cursor = "pointer";
+          heart.addEventListener("click", openEdit);
+        }
+        if (bar) {
+          bar.style.pointerEvents = "auto";
+          bar.style.cursor = "pointer";
+          bar.addEventListener("click", openEdit);
+        }
+        // If no overlays yet, still allow edit by long-pressing the cover (optional)
+        // For simplicity: double-tap on cover-wrap (not the img) is not needed;
+        // user can uncheck and re-check to rate again.
+      }
+
       return card;
     }
 
@@ -709,7 +1007,8 @@
       let visibleDone = 0;
 
       episodes.forEach(ep => {
-        const checked = !!state[ep.id];
+        const entry = getEntry(state, ep.id);
+        const checked = !!entry.listened;
         if (checked) doneCount++;
         else openCount++;
 
@@ -721,7 +1020,7 @@
 
         if (!match) return;
 
-        const card = createCard(ep, checked);
+        const card = createCard(ep, entry);
         if (checked) {
           doneList.appendChild(card);
           visibleDone++;
@@ -764,6 +1063,28 @@
       panel.classList.remove("open");
       searchInput.value = "";
       render();
+    });
+
+    // Rating modal interactions
+    document.querySelectorAll("#stars-row .star-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const s = Number(btn.dataset.star);
+        // Toggle off if clicking the same star again
+        pendingScore = (pendingScore === s) ? 0 : s;
+        updateStarsUI();
+      });
+    });
+    document.getElementById("fav-btn").addEventListener("click", () => {
+      pendingFav = !pendingFav;
+      updateFavUI();
+    });
+    document.getElementById("rating-cancel").addEventListener("click", () => {
+      closeRatingModal();
+    });
+    document.getElementById("rating-save").addEventListener("click", saveRating);
+    document.getElementById("rating-unlisten").addEventListener("click", unlistenFromModal);
+    document.getElementById("rating-modal").addEventListener("click", (e) => {
+      if (e.target.id === "rating-modal") closeRatingModal();
     });
 
     render();
