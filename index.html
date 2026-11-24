@@ -41,14 +41,14 @@
       background: var(--bg);
       color: var(--text);
       line-height: 1.4;
-      padding-bottom: 24px;
+      padding-bottom: 80px;
       min-height: 100vh;
     }
 
     header {
       background: var(--bg2);
       border-bottom: 1px solid var(--border);
-      padding: 12px 16px 14px;
+      padding: 10px 16px;
       position: sticky;
       top: 0;
       z-index: 30;
@@ -59,11 +59,10 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      margin-bottom: 10px;
     }
 
     header h1 {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: var(--accent);
       letter-spacing: -0.02em;
@@ -74,12 +73,12 @@
       align-items: center;
       gap: 10px;
       flex: 1;
-      max-width: 180px;
+      max-width: 160px;
     }
 
     .progress-bar {
       flex: 1;
-      height: 6px;
+      height: 5px;
       background: var(--border);
       border-radius: 99px;
       overflow: hidden;
@@ -93,15 +92,48 @@
     }
 
     .progress-text {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--muted);
       white-space: nowrap;
       font-variant-numeric: tabular-nums;
     }
 
-    .search-row {
+    /* Floating search */
+    .fab-search {
+      position: fixed;
+      bottom: 20px;
+      right: 16px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #2a2a2a;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 20px;
       display: flex;
-      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 40;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    .search-panel {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 12px 16px 20px;
+      z-index: 45;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .search-panel.open {
+      display: flex;
     }
 
     #search {
@@ -109,18 +141,22 @@
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 10px 14px;
+      padding: 12px 14px;
       color: var(--text);
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       outline: none;
     }
 
-    #search::placeholder {
-      color: var(--muted);
-    }
+    #search::placeholder { color: var(--muted); }
+    #search:focus { border-color: #555; }
 
-    #search:focus {
-      border-color: #555;
+    .search-close {
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-size: 1.4rem;
+      padding: 4px 8px;
+      cursor: pointer;
     }
 
     .section-header {
@@ -189,8 +225,8 @@
     }
 
     .cover-wrap {
-      width: 110px;
-      min-width: 110px;
+      width: 128px;
+      min-width: 128px;
       background: #222;
       flex-shrink: 0;
       display: flex;
@@ -201,16 +237,28 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      object-position: center top;
       display: block;
       cursor: zoom-in;
     }
 
     .info {
       flex: 1;
-      padding: 10px 12px 10px 10px;
+      padding: 10px 12px 10px 12px;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      min-width: 0;
+      position: relative;
+    }
+
+    .info-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .info-top-text {
+      flex: 1;
       min-width: 0;
     }
 
@@ -272,7 +320,7 @@
     }
 
     .title {
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       font-weight: 600;
       line-height: 1.25;
       color: var(--text);
@@ -292,15 +340,15 @@
     }
 
     .desc {
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       color: var(--muted);
-      margin-top: 3px;
+      margin-top: 6px;
+      line-height: 1.35;
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 4;
       -webkit-box-orient: vertical;
       overflow: hidden;
       cursor: pointer;
-      transition: all 0.2s;
     }
 
     .desc.expanded {
@@ -309,16 +357,9 @@
       overflow: visible;
     }
 
-    .check-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 6px;
-    }
-
     .checkbox {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       border: 2px solid #3a3a3a;
       border-radius: 7px;
       display: flex;
@@ -327,6 +368,7 @@
       cursor: pointer;
       transition: all 0.2s;
       flex-shrink: 0;
+      margin-top: 1px;
     }
 
     .checkbox.checked {
@@ -337,18 +379,8 @@
     .checkbox.checked::after {
       content: "✓";
       color: #0a0a0a;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 700;
-    }
-
-    .status {
-      font-size: 0.68rem;
-      color: var(--muted);
-    }
-
-    .status.done {
-      color: var(--success);
-      font-weight: 600;
     }
 
     .reset-link {
@@ -389,9 +421,6 @@
         <div class="progress-text" id="progressText">0/159</div>
       </div>
     </div>
-    <div class="search-row">
-      <input type="search" id="search" placeholder="Suche Titel oder Nr…" autocomplete="off" />
-    </div>
   </header>
 
   <div id="openSection">
@@ -409,6 +438,12 @@
       <span class="chevron">▼</span>
     </div>
     <div class="list" id="doneList"></div>
+  </div>
+
+  <button class="fab-search" id="fabSearch" aria-label="Suche">🔍</button>
+  <div class="search-panel" id="searchPanel">
+    <input type="search" id="search" placeholder="Suche Titel oder Nr…" autocomplete="off" />
+    <button class="search-close" id="searchClose" aria-label="Schließen">×</button>
   </div>
 
   <div id="lightbox">
@@ -640,21 +675,20 @@
         <div class="cover-wrap">
           <img class="cover" src="${ep.cover}" alt="Cover ${ep.id}" loading="lazy"
                onclick="openLightbox(this.src)"
-               onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='https://www.bibiblocksberg.de/sites/default/files/styles/max_2600x2600/public/episode/${ep.id}.JPG.webp';}else if(!this.dataset.tried2){this.dataset.tried2=1;this.src='https://www.bibiblocksberg.de/sites/default/files/styles/max_2600x2600/public/hoerspiele/ep_image/Bibi_Blocksberg_${String(ep.id).padStart(3,'0')}.jpg.webp';}else{this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22110%22 height=%22110%22%3E%3Crect fill=%22%23222%22 width=%22110%22 height=%22110%22/%3E%3Ctext x=%2255%22 y=%2262%22 text-anchor=%22middle%22 fill=%22%23aaa%22 font-size=%2222%22%3E${ep.id}%3C/text%3E%3C/svg%3E';}">
+               onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='https://www.bibiblocksberg.de/sites/default/files/styles/max_2600x2600/public/episode/${ep.id}.JPG.webp';}else if(!this.dataset.tried2){this.dataset.tried2=1;this.src='https://www.bibiblocksberg.de/sites/default/files/styles/max_2600x2600/public/hoerspiele/ep_image/Bibi_Blocksberg_${String(ep.id).padStart(3,'0')}.jpg.webp';}else{this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22128%22 height=%22128%22%3E%3Crect fill=%22%23222%22 width=%22128%22 height=%22128%22/%3E%3Ctext x=%2264%22 y=%2272%22 text-anchor=%22middle%22 fill=%22%23aaa%22 font-size=%2224%22%3E${ep.id}%3C/text%3E%3C/svg%3E';}">
         </div>
         <div class="info">
-          <div>
-            <div class="title-row">
-              <span class="num">#${ep.id}</span>
-              <div class="title">${ep.title}</div>
+          <div class="info-top">
+            <div class="info-top-text">
+              <div class="title-row">
+                <span class="num">#${ep.id}</span>
+                <div class="title">${ep.title}</div>
+              </div>
+              <div class="meta"><span class="year">${ep.year}</span></div>
             </div>
-            <div class="meta"><span class="year">${ep.year}</span></div>
-            <div class="desc" onclick="this.classList.toggle('expanded')">${ep.desc}</div>
-          </div>
-          <div class="check-row">
-            <span class="status ${checked ? "done" : ""}">${checked ? "Gehört ✓" : "Noch nicht"}</span>
             <div class="checkbox ${checked ? "checked" : ""}" onclick="toggle(${ep.id})"></div>
           </div>
+          <div class="desc" onclick="this.classList.toggle('expanded')">${ep.desc}</div>
         </div>
       `;
       return card;
@@ -718,6 +752,20 @@
     }
 
     document.getElementById("search").addEventListener("input", render);
+
+    const fab = document.getElementById("fabSearch");
+    const panel = document.getElementById("searchPanel");
+    const searchInput = document.getElementById("search");
+    fab.addEventListener("click", () => {
+      panel.classList.add("open");
+      searchInput.focus();
+    });
+    document.getElementById("searchClose").addEventListener("click", () => {
+      panel.classList.remove("open");
+      searchInput.value = "";
+      render();
+    });
+
     render();
 
     // ——— Lightbox with pinch-zoom ———

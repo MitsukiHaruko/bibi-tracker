@@ -1,4 +1,4 @@
-const CACHE = "bibi-tracker-v4";
+const CACHE = "bibi-tracker-v5";
 const ASSETS = [
   "./",
   "./index.html",
