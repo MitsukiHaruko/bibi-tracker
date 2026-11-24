@@ -256,6 +256,32 @@
       filter: drop-shadow(0 0 1px rgba(0,0,0,0.5));
     }
 
+    /* Golden animated sheen for favorites */
+    .cover-wrap.favorite::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -75%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(
+        105deg,
+        transparent 20%,
+        rgba(255, 215, 0, 0.15) 35%,
+        rgba(255, 236, 150, 0.45) 50%,
+        rgba(255, 215, 0, 0.15) 65%,
+        transparent 80%
+      );
+      animation: golden-sheen 2.8s ease-in-out infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    @keyframes golden-sheen {
+      0% { left: -75%; }
+      60%, 100% { left: 130%; }
+    }
+
     .score-bar {
       position: absolute;
       bottom: 0;
@@ -441,6 +467,47 @@
       font-size: 0.9rem;
     }
 
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      padding: 0 16px 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-bar.collapsed {
+      display: none;
+    }
+
+    .filter-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 99px;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .filter-btn:active {
+      background: var(--card-hover);
+    }
+
+    .filter-btn.active {
+      background: #2a2a2a;
+      border-color: #555;
+      color: var(--text);
+    }
+
+    .filter-btn.fav-active {
+      background: rgba(255, 215, 0, 0.12);
+      border-color: #b8860b;
+      color: #FFD700;
+    }
+
     .hidden {
       display: none !important;
     }
@@ -586,6 +653,11 @@
       <h2 id="doneLabel">Gehört</h2>
       <span class="reset-link" onclick="event.stopPropagation(); resetAll()">Alles zurücksetzen</span>
       <span class="chevron">▼</span>
+    </div>
+    <div class="filter-bar" id="doneFilters">
+      <button type="button" class="filter-btn active" data-sort="id" id="sortIdBtn">Nr. ↑</button>
+      <button type="button" class="filter-btn" data-sort="rating" id="sortRatingBtn">Bewertung ↓</button>
+      <button type="button" class="filter-btn" id="favOnlyBtn">Nur Favoriten</button>
     </div>
     <div class="list" id="doneList"></div>
   </div>
@@ -803,6 +875,8 @@
 
     let openCollapsed = false;
     let doneCollapsed = false;
+    let doneSort = "id";       // "id" | "rating"
+    let doneFavOnly = false;
 
     // Rating modal state
     let pendingId = null;
@@ -923,6 +997,7 @@
         doneCollapsed = !doneCollapsed;
         document.getElementById("doneHeader").classList.toggle("collapsed", doneCollapsed);
         document.getElementById("doneList").classList.toggle("collapsed", doneCollapsed);
+        document.getElementById("doneFilters").classList.toggle("collapsed", doneCollapsed);
       }
     }
 
@@ -944,7 +1019,7 @@
       }
 
       card.innerHTML = `
-        <div class="cover-wrap">
+        <div class="cover-wrap${favorite ? " favorite" : ""}">
           <img class="cover" src="${ep.cover}" alt="Cover ${ep.id}" loading="lazy"
                onclick="openLightbox(this.src)"
                onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='https://www.bibiblocksberg.de/sites/default/files/styles/max_2600x2600/public/episode/${ep.id}.JPG.webp';}else if(!this.dataset.tried2){this.dataset.tried2=1;this.src='https://www.bibiblocksberg.de/sites/default/files/styles/max_2600x2600/public/hoerspiele/ep_image/Bibi_Blocksberg_${String(ep.id).padStart(3,'0')}.jpg.webp';}else{this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22128%22 height=%22128%22%3E%3Crect fill=%22%23222%22 width=%22128%22 height=%22128%22/%3E%3Ctext x=%2264%22 y=%2272%22 text-anchor=%22middle%22 fill=%22%23aaa%22 font-size=%2224%22%3E${ep.id}%3C/text%3E%3C/svg%3E';}">
@@ -1006,6 +1081,8 @@
       let visibleOpen = 0;
       let visibleDone = 0;
 
+      const doneItems = [];
+
       episodes.forEach(ep => {
         const entry = getEntry(state, ep.id);
         const checked = !!entry.listened;
@@ -1020,20 +1097,45 @@
 
         if (!match) return;
 
-        const card = createCard(ep, entry);
         if (checked) {
-          doneList.appendChild(card);
-          visibleDone++;
+          // Apply favorites-only filter
+          if (doneFavOnly && !entry.favorite) return;
+          doneItems.push({ ep, entry });
         } else {
+          const card = createCard(ep, entry);
           openList.appendChild(card);
           visibleOpen++;
         }
+      });
+
+      // Sort done items
+      if (doneSort === "rating") {
+        doneItems.sort((a, b) => {
+          const sa = a.entry.score || 0;
+          const sb = b.entry.score || 0;
+          if (sb !== sa) return sb - sa; // rating desc
+          return a.ep.id - b.ep.id;      // then by id
+        });
+      } else {
+        doneItems.sort((a, b) => a.ep.id - b.ep.id);
+      }
+
+      doneItems.forEach(({ ep, entry }) => {
+        const card = createCard(ep, entry);
+        doneList.appendChild(card);
+        visibleDone++;
       });
 
       document.getElementById("openLabel").textContent =
         `Noch zu hören${openCount ? ` (${openCount})` : ""}`;
       document.getElementById("doneLabel").textContent =
         `Gehört${doneCount ? ` (${doneCount})` : ""}`;
+
+      // Sync filter button states
+      document.getElementById("sortIdBtn").classList.toggle("active", doneSort === "id");
+      document.getElementById("sortRatingBtn").classList.toggle("active", doneSort === "rating");
+      document.getElementById("favOnlyBtn").classList.toggle("fav-active", doneFavOnly);
+      document.getElementById("favOnlyBtn").classList.toggle("active", doneFavOnly);
 
       if (visibleOpen === 0 && !query) {
         openList.innerHTML = `<div class="empty">Alles gehört – stark!</div>`;
@@ -1042,7 +1144,11 @@
       }
 
       if (visibleDone === 0) {
-        doneList.innerHTML = `<div class="empty">Noch nichts gehört</div>`;
+        if (doneFavOnly && doneCount > 0) {
+          doneList.innerHTML = `<div class="empty">Keine Favoriten in „Gehört“</div>`;
+        } else {
+          doneList.innerHTML = `<div class="empty">Noch nichts gehört</div>`;
+        }
       }
 
       const pct = (doneCount / TOTAL) * 100;
@@ -1051,6 +1157,23 @@
     }
 
     document.getElementById("search").addEventListener("input", render);
+
+    // Done-section filters
+    document.getElementById("sortIdBtn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      doneSort = "id";
+      render();
+    });
+    document.getElementById("sortRatingBtn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      doneSort = "rating";
+      render();
+    });
+    document.getElementById("favOnlyBtn").addEventListener("click", (e) => {
+      e.stopPropagation();
+      doneFavOnly = !doneFavOnly;
+      render();
+    });
 
     const fab = document.getElementById("fabSearch");
     const panel = document.getElementById("searchPanel");
