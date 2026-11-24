@@ -1,4 +1,4 @@
-const CACHE = "bibi-tracker-v9";
+const CACHE = "bibi-tracker-v10";
 const ASSETS = [
   "./",
   "./index.html",
@@ -46,7 +46,7 @@ self.addEventListener("fetch", (e) => {
   }
 
   // External covers: network first
-  if (url.includes("bibiblocksberg.de")) {
+  if (url.includes("bibiblocksberg.de") || url.includes("bibiundtina.de")) {
     e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
     return;
   }
