@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#160a28" />
+  <meta name="theme-color" content="#06152f" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Bibi Tracker" />
@@ -15,22 +15,22 @@
   <title>Bibi Blocksberg Tracker</title>
   <style>
     :root {
-      /* Magical night-sky Bibi theme */
-      --bg: #160a28;
-      --bg2: #22103a;
-      --card: #2e1a4a;
-      --card-hover: #3c2460;
-      --text: #f8f0ff;
-      --muted: #c4a8d8;
-      --primary: #ff7eb9;
-      --primary-dim: #e05a9a;
-      --success: #7ddea8;
-      --border: #4a2d6a;
-      --greyed: #8a7598;
-      --accent: #ffd56a;
-      --star-gold: #ffd56a;
-      --pink-glow: rgba(255, 126, 185, 0.35);
-      --gold-glow: rgba(255, 213, 106, 0.4);
+      /* Deep midnight blue + forest green + Bibi yellow */
+      --bg: #06152f;
+      --bg2: #0b2440;
+      --card: #123d32;
+      --card-hover: #19523b;
+      --text: #f3f8df;
+      --muted: #b8d3a0;
+      --primary: #b6d957;
+      --primary-dim: #82b83f;
+      --success: #a8d95b;
+      --border: #315b3d;
+      --greyed: #71866b;
+      --accent: #ffdc5e;
+      --star-gold: #ffdc5e;
+      --pink-glow: rgba(182, 217, 87, 0.28);
+      --gold-glow: rgba(255, 220, 94, 0.38);
     }
 
     * {
@@ -42,19 +42,44 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      background-image:
-        radial-gradient(ellipse 120% 80% at 50% -20%, rgba(120, 40, 160, 0.45) 0%, transparent 55%),
-        radial-gradient(ellipse 80% 50% at 90% 20%, rgba(255, 100, 180, 0.12) 0%, transparent 45%),
-        radial-gradient(ellipse 60% 40% at 10% 80%, rgba(80, 40, 140, 0.25) 0%, transparent 50%);
+      background: linear-gradient(180deg, #06152f 0%, #08213a 58%, #0a2b32 100%);
       color: var(--text);
       line-height: 1.4;
       padding-bottom: 80px;
       min-height: 100vh;
+      position: relative;
+      isolation: isolate;
+    }
+
+    /* Layered pinprick stars: a real midnight-sky feel, not a purple glow */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image:
+        radial-gradient(2px 2px at 7% 13%, rgba(255,255,220,.95) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 18% 34%, rgba(255,220,94,.9) 50%, transparent 100%),
+        radial-gradient(2px 2px at 29% 8%, rgba(220,239,255,.9) 50%, transparent 100%),
+        radial-gradient(1px 1px at 39% 25%, rgba(255,255,255,.85) 50%, transparent 100%),
+        radial-gradient(2px 2px at 51% 12%, rgba(255,220,94,.9) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 63% 31%, rgba(255,255,255,.9) 50%, transparent 100%),
+        radial-gradient(2px 2px at 75% 10%, rgba(255,220,94,.9) 50%, transparent 100%),
+        radial-gradient(1px 1px at 88% 23%, rgba(230,245,255,.9) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 95% 43%, rgba(255,255,255,.85) 50%, transparent 100%),
+        radial-gradient(1px 1px at 12% 62%, rgba(255,255,255,.75) 50%, transparent 100%),
+        radial-gradient(2px 2px at 34% 71%, rgba(255,220,94,.8) 50%, transparent 100%),
+        radial-gradient(1px 1px at 58% 58%, rgba(255,255,255,.8) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 82% 76%, rgba(220,239,255,.85) 50%, transparent 100%),
+        radial-gradient(1px 1px at 94% 89%, rgba(255,220,94,.8) 50%, transparent 100%),
+        radial-gradient(ellipse 75% 45% at 50% 0%, rgba(24,77,132,.22), transparent 75%);
+      background-size: 100% 100%;
+      opacity: .95;
     }
 
     header {
-      background: linear-gradient(180deg, var(--bg2) 0%, rgba(34, 16, 58, 0.95) 100%);
+      background: linear-gradient(180deg, rgba(8, 29, 57, .97) 0%, rgba(11, 36, 64, .88) 100%);
       border-bottom: 1px solid var(--border);
       padding: 10px 16px;
       position: sticky;
@@ -97,7 +122,7 @@
     .progress-bar {
       flex: 1;
       height: 6px;
-      background: rgba(74, 45, 106, 0.7);
+      background: rgba(40, 76, 57, 0.8);
       border-radius: 99px;
       overflow: hidden;
       box-shadow: inset 0 1px 2px rgba(0,0,0,0.3);
@@ -105,7 +130,7 @@
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #ff7eb9, #ffd56a);
+      background: linear-gradient(90deg, #8fbd45, #ffdc5e);
       border-radius: 99px;
       transition: width 0.35s ease;
       box-shadow: 0 0 10px var(--pink-glow);
@@ -126,7 +151,7 @@
       width: 50px;
       height: 50px;
       border-radius: 50%;
-      background: linear-gradient(145deg, #ff7eb9, #d45a9a);
+      background: linear-gradient(145deg, #b6d957, #8ebc3d);
       border: none;
       color: #fff;
       font-size: 20px;
@@ -135,7 +160,7 @@
       justify-content: center;
       cursor: pointer;
       z-index: 40;
-      box-shadow: 0 4px 18px rgba(255, 100, 160, 0.45), 0 2px 6px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 18px rgba(182, 217, 87, 0.3), 0 2px 6px rgba(0,0,0,0.3);
     }
     .fab-search:active {
       transform: scale(0.94);
@@ -255,7 +280,7 @@
     .cover-wrap {
       width: 128px;
       min-width: 128px;
-      background: #1a0a28;
+      background: #092b2b;
       flex-shrink: 0;
       display: flex;
       align-self: stretch;
@@ -288,8 +313,8 @@
     .card.favorite {
       position: relative;
       overflow: hidden;
-      border-color: rgba(255, 213, 106, 0.45);
-      box-shadow: 0 0 16px rgba(255, 180, 60, 0.18), 0 2px 10px rgba(0,0,0,0.25);
+      border-color: rgba(226, 202, 74, 0.5);
+      box-shadow: 0 0 16px rgba(226, 202, 74, 0.16), 0 2px 10px rgba(0,0,0,0.25);
     }
     .card.favorite::after {
       content: "";
@@ -302,9 +327,9 @@
         105deg,
         transparent 0%,
         transparent 40%,
-        rgba(255, 215, 0, 0.12) 45%,
-        rgba(255, 236, 150, 0.5) 50%,
-        rgba(255, 215, 0, 0.12) 55%,
+        rgba(255, 220, 94, 0.12) 45%,
+        rgba(255, 236, 150, 0.4) 50%,
+        rgba(255, 220, 94, 0.12) 55%,
         transparent 60%,
         transparent 100%
       );
@@ -327,7 +352,7 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: rgba(22, 10, 40, 0.88);
+      background: rgba(6, 21, 47, 0.9);
       padding: 4px 0 5px;
       display: flex;
       justify-content: center;
@@ -370,7 +395,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(10, 4, 20, 0.96);
+      background: rgba(3, 10, 28, 0.97);
       z-index: 100;
       align-items: center;
       justify-content: center;
@@ -393,7 +418,7 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background: rgba(255, 126, 185, 0.25);
+      background: rgba(182, 217, 87, 0.2);
       color: #fff;
       border: none;
       font-size: 22px;
@@ -412,7 +437,7 @@
     }
 
     .num {
-      background: linear-gradient(135deg, #4a2d6a, #3a1f5a);
+      background: linear-gradient(135deg, #315b3d, #28513a);
       color: var(--primary);
       font-size: 0.65rem;
       font-weight: 700;
@@ -420,7 +445,7 @@
       border-radius: 5px;
       flex-shrink: 0;
       margin-top: 1px;
-      border: 1px solid rgba(255, 126, 185, 0.25);
+      border: 1px solid rgba(182, 217, 87, 0.2);
     }
 
     .title {
@@ -510,7 +535,7 @@
     .checkbox {
       width: 26px;
       height: 26px;
-      border: 2px solid #6a4a8a;
+      border: 2px solid #6c9650;
       border-radius: 7px;
       display: flex;
       align-items: center;
@@ -519,13 +544,13 @@
       transition: all 0.2s;
       flex-shrink: 0;
       margin-top: 1px;
-      background: rgba(46, 26, 74, 0.5);
+      background: rgba(18, 61, 50, 0.55);
     }
 
     .checkbox.checked {
       background: var(--success);
       border-color: var(--success);
-      box-shadow: 0 0 10px rgba(125, 222, 168, 0.4);
+      box-shadow: 0 0 10px rgba(168, 217, 91, 0.32);
     }
 
     .checkbox.checked::after {
@@ -608,7 +633,7 @@
 
     .hist-bar-fill {
       height: 100%;
-      background: linear-gradient(90deg, #ff7eb9, #ffd56a);
+      background: linear-gradient(90deg, #8fbd45, #ffdc5e);
       border-radius: 99px;
       transition: width 0.35s ease;
       min-width: 0;
@@ -641,14 +666,14 @@
     }
 
     .filter-btn.active {
-      background: rgba(255, 126, 185, 0.18);
+      background: rgba(182, 217, 87, 0.16);
       border-color: var(--primary);
       color: var(--primary);
     }
 
     .filter-btn.fav-active {
-      background: rgba(255, 213, 106, 0.15);
-      border-color: #c9a227;
+      background: rgba(255, 220, 94, 0.14);
+      border-color: #d6b943;
       color: var(--star-gold);
     }
 
@@ -661,7 +686,7 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(10, 4, 22, 0.82);
+      background: rgba(3, 10, 28, 0.84);
       z-index: 90;
       align-items: center;
       justify-content: center;
@@ -670,7 +695,7 @@
     #rating-modal.open { display: flex; }
 
     .rating-box {
-      background: linear-gradient(165deg, #2e1a4a 0%, #22103a 100%);
+      background: linear-gradient(165deg, #174b38 0%, #0b2b35 100%);
       border: 1px solid var(--border);
       border-radius: 18px;
       padding: 22px 20px 18px;
@@ -706,7 +731,7 @@
       background: none;
       border: none;
       font-size: 28px;
-      color: #4a3a5a;
+      color: #435b42;
       cursor: pointer;
       padding: 4px;
       line-height: 1;
@@ -744,7 +769,7 @@
     .fav-btn.active {
       border-color: var(--star-gold);
       color: var(--star-gold);
-      background: rgba(255, 213, 106, 0.12);
+      background: rgba(255, 220, 94, 0.12);
       box-shadow: 0 0 14px var(--gold-glow);
     }
     .fav-btn .heart-icon {
@@ -770,7 +795,7 @@
       border: 1px solid var(--border);
     }
     .rating-actions .btn-save {
-      background: linear-gradient(135deg, #7ddea8, #5bc98a);
+      background: linear-gradient(135deg, #a8d95b, #78b94b);
       color: #0a1a12;
       box-shadow: 0 2px 12px rgba(125, 222, 168, 0.35);
     }
