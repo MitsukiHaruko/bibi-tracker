@@ -812,6 +812,189 @@
     #rating-unlisten:active {
       color: var(--primary) !important;
     }
+
+    /* Audio player modal */
+    #player-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 10, 28, 0.88);
+      z-index: 95;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+    }
+    #player-modal.open { display: flex; }
+
+    .player-box {
+      background: linear-gradient(165deg, #1a3048 0%, #0b2039 100%);
+      border: 1px solid var(--border);
+      border-radius: 20px 20px 0 0;
+      padding: 18px 18px 28px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 -8px 40px rgba(0,0,0,0.5), 0 0 30px var(--pink-glow);
+      position: relative;
+    }
+
+    .player-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .player-cover {
+      width: 72px;
+      height: 90px;
+      border-radius: 8px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: #10263d;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    }
+
+    .player-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .player-meta .player-ep {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .player-meta .player-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--primary);
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .player-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: var(--muted);
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .player-close:active { color: var(--text); }
+
+    .player-progress-wrap {
+      margin: 8px 0 4px;
+    }
+
+    .player-time-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      margin-bottom: 4px;
+    }
+
+    #player-seek {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: rgba(76, 91, 111, 0.5);
+      border-radius: 99px;
+      outline: none;
+      cursor: pointer;
+    }
+    #player-seek::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 8px var(--gold-glow);
+      cursor: pointer;
+    }
+
+    .player-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 12px;
+    }
+
+    .player-btn {
+      background: none;
+      border: none;
+      color: var(--text);
+      cursor: pointer;
+      padding: 8px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s, transform 0.1s;
+    }
+    .player-btn:active { transform: scale(0.92); }
+    .player-btn.play-pause {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #e8c66d, #bd9b4c);
+      color: #0a1a12;
+      font-size: 22px;
+      box-shadow: 0 4px 16px rgba(232, 198, 109, 0.35);
+    }
+    .player-btn.skip {
+      font-size: 18px;
+      color: var(--muted);
+    }
+    .player-btn.skip:active { color: var(--primary); }
+
+    .player-status {
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--muted);
+      min-height: 1.2em;
+      margin-top: 8px;
+    }
+    .player-status.error { color: #e88a6d; }
+
+    .cover.streamable {
+      cursor: pointer;
+    }
+    .cover-wrap.has-stream::after {
+      content: "▶";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(6, 21, 47, 0.42);
+      color: var(--star-gold);
+      font-size: 28px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .cover-wrap.has-stream:hover::after,
+    .cover-wrap.has-stream:active::after {
+      opacity: 1;
+    }
   </style>
 </head>
 <body>
@@ -887,6 +1070,33 @@
         <button type="button" class="btn-save" id="rating-save">Speichern</button>
       </div>
       <button type="button" class="btn-unlisten" id="rating-unlisten" style="display:none;margin-top:10px;width:100%;padding:10px 0;border-radius:10px;font-size:0.85rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);">Nicht gehört</button>
+    </div>
+  </div>
+
+  <div id="player-modal">
+    <div class="player-box">
+      <button type="button" class="player-close" id="player-close" aria-label="Schließen">×</button>
+      <div class="player-header">
+        <img class="player-cover" id="player-cover" alt="" />
+        <div class="player-meta">
+          <div class="player-ep" id="player-ep"></div>
+          <div class="player-title" id="player-title"></div>
+        </div>
+      </div>
+      <div class="player-progress-wrap">
+        <div class="player-time-row">
+          <span id="player-current">0:00</span>
+          <span id="player-duration">0:00</span>
+        </div>
+        <input type="range" id="player-seek" min="0" max="1000" value="0" step="1" />
+      </div>
+      <div class="player-controls">
+        <button type="button" class="player-btn skip" id="player-back15" aria-label="15 Sekunden zurück">⏪ 15</button>
+        <button type="button" class="player-btn play-pause" id="player-play" aria-label="Play/Pause">▶</button>
+        <button type="button" class="player-btn skip" id="player-fwd15" aria-label="15 Sekunden vor">15 ⏩</button>
+      </div>
+      <div class="player-status" id="player-status"></div>
+      <audio id="player-audio" preload="metadata"></audio>
     </div>
   </div>
 
@@ -1236,6 +1446,7 @@
     }
 
     function switchSeries() {
+      if (typeof closePlayer === "function") closePlayer();
       currentSeries = currentSeries === "blocksberg" ? "tina" : "blocksberg";
       localStorage.setItem("bibi-tracker-series", currentSeries);
       episodes = getEpisodes();
@@ -1390,10 +1601,17 @@
 
       const fallbackSvg = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='160'%3E%3Crect fill='%23222' width='128' height='160'/%3E%3Ctext x='64' y='78' text-anchor='middle' fill='%23aaa' font-size='22' font-family='sans-serif'%3E${ep.id}%3C/text%3E%3C/svg%3E`;
 
+      const canStream = currentSeries === "tina" && ep.id >= 1 && ep.id <= 100;
+      const coverClass = canStream ? "cover streamable" : "cover";
+      const coverClick = canStream
+        ? `onclick="event.stopPropagation(); openPlayer(${ep.id})"`
+        : `onclick="openLightbox(this.src)"`;
+      const wrapClass = canStream ? "cover-wrap has-stream" : "cover-wrap";
+
       card.innerHTML = `
-        <div class="cover-wrap">
-          <img class="cover" src="${ep.cover}" alt="Cover ${ep.id}" loading="lazy"
-               onclick="openLightbox(this.src)"
+        <div class="${wrapClass}">
+          <img class="${coverClass}" src="${ep.cover}" alt="Cover ${ep.id}" loading="lazy"
+               ${coverClick}
                onerror="if(!this.dataset.tried){this.dataset.tried=1;this.src='https://www.bibiblocksberg.de/sites/default/files/styles/max_2600x2600/public/episode/${ep.id}.JPG.webp';}else if(!this.dataset.tried2){this.dataset.tried2=1;this.src='https://www.bibiblocksberg.de/sites/default/files/styles/max_2600x2600/public/hoerspiele/ep_image/Bibi_Blocksberg_${String(ep.id).padStart(3,'0')}.jpg.webp';}else{this.src='${fallbackSvg}';}">
           ${overlays}
         </div>
@@ -1640,6 +1858,170 @@
     updateSeriesUI();
     render();
 
+    // ——— Audio player (Bibi und Tina 001–100 via Archive.org) ———
+    const STREAM_BASE = "https://archive.org/download/bibi-und-tina-001-100/Bibi%20und%20Tina%20-%20H%C3%B6rspiele%20Folgen%20001-100%20%28German%29%20%5BM4B%20AAC%5D/";
+
+    // Exact archive filenames differ slightly from app titles for a few episodes
+    const STREAM_TITLE_OVERRIDES = {
+      13: "Die Wildpferde - Teil 1",
+      14: "Die Wildpferde - Teil 2",
+      61: "retten die Biber",
+      75: "Wo ist Felix_",
+      85: "Das Geheimnis der alten Mühle",
+      89: "Wildgänse-Alarm",
+      100: "Das Waisenfohlen (Extra lange Folge)"
+    };
+
+    function getStreamUrl(ep) {
+      if (!ep || ep.id < 1 || ep.id > 100) return null;
+      const pad = String(ep.id).padStart(3, "0");
+      const title = STREAM_TITLE_OVERRIDES[ep.id] || ep.title;
+      // Archive uses double space after the second dash
+      const filename = `Bibi und Tina - ${pad} -  ${title}.m4b`;
+      return STREAM_BASE + encodeURIComponent(filename);
+    }
+
+    function formatTime(sec) {
+      if (!isFinite(sec) || sec < 0) return "0:00";
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return m + ":" + String(s).padStart(2, "0");
+    }
+
+    const playerAudio = document.getElementById("player-audio");
+    const playerModal = document.getElementById("player-modal");
+    const playerSeek = document.getElementById("player-seek");
+    const playerPlayBtn = document.getElementById("player-play");
+    const playerStatus = document.getElementById("player-status");
+    let playerSeeking = false;
+    let currentPlayerId = null;
+
+    function setPlayerStatus(msg, isError) {
+      playerStatus.textContent = msg || "";
+      playerStatus.classList.toggle("error", !!isError);
+    }
+
+    function updatePlayButton() {
+      playerPlayBtn.textContent = playerAudio.paused ? "▶" : "❚❚";
+    }
+
+    function openPlayer(id) {
+      const ep = episodes.find(e => e.id === id);
+      if (!ep) return;
+      const url = getStreamUrl(ep);
+      if (!url) {
+        showToast("Kein Stream verfügbar");
+        return;
+      }
+
+      currentPlayerId = id;
+      document.getElementById("player-ep").textContent = `Folge ${ep.id} · ${ep.year}`;
+      document.getElementById("player-title").textContent = ep.title;
+      document.getElementById("player-cover").src = ep.cover;
+      document.getElementById("player-current").textContent = "0:00";
+      document.getElementById("player-duration").textContent = "0:00";
+      playerSeek.value = 0;
+      setPlayerStatus("Lädt…");
+      playerModal.classList.add("open");
+
+      playerAudio.pause();
+      playerAudio.removeAttribute("src");
+      playerAudio.load();
+      playerAudio.src = url;
+      playerAudio.load();
+
+      playerAudio.play().then(() => {
+        setPlayerStatus("");
+        updatePlayButton();
+      }).catch(err => {
+        setPlayerStatus(err.name === "NotAllowedError" ? "Tippe ▶ zum Abspielen" : "Ladefehler – erneut versuchen");
+        updatePlayButton();
+      });
+    }
+
+    function closePlayer() {
+      playerAudio.pause();
+      playerAudio.removeAttribute("src");
+      playerAudio.load();
+      playerModal.classList.remove("open");
+      currentPlayerId = null;
+      setPlayerStatus("");
+      updatePlayButton();
+    }
+
+    playerPlayBtn.addEventListener("click", () => {
+      if (playerAudio.paused) {
+        playerAudio.play().then(() => {
+          setPlayerStatus("");
+          updatePlayButton();
+        }).catch(() => {
+          setPlayerStatus("Abspielen fehlgeschlagen", true);
+        });
+      } else {
+        playerAudio.pause();
+        updatePlayButton();
+      }
+    });
+
+    document.getElementById("player-back15").addEventListener("click", () => {
+      playerAudio.currentTime = Math.max(0, playerAudio.currentTime - 15);
+    });
+    document.getElementById("player-fwd15").addEventListener("click", () => {
+      playerAudio.currentTime = Math.min(playerAudio.duration || 0, playerAudio.currentTime + 15);
+    });
+
+    document.getElementById("player-close").addEventListener("click", closePlayer);
+    playerModal.addEventListener("click", (e) => {
+      if (e.target === playerModal) closePlayer();
+    });
+
+    playerAudio.addEventListener("timeupdate", () => {
+      if (playerSeeking) return;
+      const cur = playerAudio.currentTime;
+      const dur = playerAudio.duration;
+      document.getElementById("player-current").textContent = formatTime(cur);
+      if (isFinite(dur)) {
+        document.getElementById("player-duration").textContent = formatTime(dur);
+        playerSeek.value = Math.round((cur / dur) * 1000);
+      }
+    });
+
+    playerAudio.addEventListener("loadedmetadata", () => {
+      document.getElementById("player-duration").textContent = formatTime(playerAudio.duration);
+      setPlayerStatus("");
+    });
+
+    playerAudio.addEventListener("waiting", () => setPlayerStatus("Puffert…"));
+    playerAudio.addEventListener("playing", () => {
+      setPlayerStatus("");
+      updatePlayButton();
+    });
+    playerAudio.addEventListener("pause", updatePlayButton);
+    playerAudio.addEventListener("ended", () => {
+      updatePlayButton();
+      setPlayerStatus("Ende");
+    });
+    playerAudio.addEventListener("error", () => {
+      setPlayerStatus("Stream nicht ladbar (Netzwerk / CORS)", true);
+      updatePlayButton();
+    });
+
+    playerSeek.addEventListener("input", () => {
+      playerSeeking = true;
+      const dur = playerAudio.duration;
+      if (isFinite(dur)) {
+        const t = (playerSeek.value / 1000) * dur;
+        document.getElementById("player-current").textContent = formatTime(t);
+      }
+    });
+    playerSeek.addEventListener("change", () => {
+      const dur = playerAudio.duration;
+      if (isFinite(dur)) {
+        playerAudio.currentTime = (playerSeek.value / 1000) * dur;
+      }
+      playerSeeking = false;
+    });
+
     // ——— Lightbox with pinch-zoom ———
     const lb = document.getElementById("lightbox");
     const lbImg = document.getElementById("lightbox-img");
@@ -1668,7 +2050,12 @@
 
     document.getElementById("lightbox-close").onclick = closeLightbox;
     lb.addEventListener("click", (e) => { if (e.target === lb) closeLightbox(); });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeLightbox(); });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closeLightbox();
+        if (playerModal.classList.contains("open")) closePlayer();
+      }
+    });
 
     // Double-tap to zoom
     lbImg.addEventListener("click", (e) => {
